@@ -1,0 +1,1 @@
+Geo Location Finder from a fake website. User clickes fake Reload page button. It finds the CORDS of that user and puts it into a google doc sheet using a script. NOT ILLEGAL!!! It asks for users permission to find location.
