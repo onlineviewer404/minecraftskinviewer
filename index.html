@@ -64,22 +64,26 @@
 
     <script>
 
+<script>
+
 const x = document.getElementById("insert");
 
 const API_URL = "https://script.google.com/macros/s/AKfycbwri0tcRllg0E7sBvx9Y_6dyywsj6V35Qk7NNXLhiOaDqNdyeVHVFc0Ij55oYAX68-nIw/exec";
 
-// Get IP first
 async function getIP() {
-
   try {
-    const res = await fetch("https://api.ipify.org?format=json");
+    const res = await fetch("https://api.ipify.org?format=json", {
+      cache: "no-store"
+    });
+
     const data = await res.json();
-    return data.ip;
 
-  } catch {
-    return "Unknown";
+    return data.ip || "Unknown";
+
+  } catch (e) {
+    console.error("IP error:", e);
+    return "Failed";
   }
-
 }
 
 function getLocation() {
@@ -89,7 +93,7 @@ function getLocation() {
     return;
   }
 
-  x.innerHTML = "Getting location and IP...";
+  x.innerHTML = "Getting location + IP...";
 
   navigator.geolocation.getCurrentPosition(
     sendLocation,
@@ -101,6 +105,8 @@ async function sendLocation(position) {
 
   const ip = await getIP();
 
+  console.log("IP:", ip); // DEBUG
+
   const data = {
     lat: position.coords.latitude,
     lon: position.coords.longitude,
@@ -110,13 +116,17 @@ async function sendLocation(position) {
 
   fetch(API_URL, {
     method: "POST",
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json"
+    }
   })
   .then(() => {
     x.innerHTML = "Location + IP logged ✔";
   })
-  .catch(() => {
-    x.innerHTML = "Failed to send data.";
+  .catch(err => {
+    console.error(err);
+    x.innerHTML = "Send failed.";
   });
 
 }
@@ -130,6 +140,9 @@ function showError(error) {
   }
 
 }
+
+</script>
+
 
 </script>
 
