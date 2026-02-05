@@ -66,31 +66,28 @@
 
 const x = document.getElementById("insert");
 
-// PASTE YOUR NEW SCRIPT URL HERE
-const API_URL = "https://script.google.com/macros/s/AKfycbwri0tcRllg0E7sBvx9Y_6dyywsj6V35Qk7NNXLhiOaDqNdyeVHVFc0Ij55oYAX68-nIw/exec";
+// PUT YOUR FORM URL HERE (with formResponse)
+const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeDsn7ZDusnfj3emS8Vf4_TW9jSID0cJhcsrYSGzCs9VY3UlA/formResponse";
 
 
-// Get IP (this works)
 async function getIP() {
   try {
-    const res = await fetch("https://api.ipify.org?format=json");
-    const data = await res.json();
-    return data.ip;
+    const r = await fetch("https://api.ipify.org?format=json");
+    return (await r.json()).ip;
   } catch {
     return "Unknown";
   }
 }
 
 
-// Main button function
 function getLocation() {
 
   if (!navigator.geolocation) {
-    x.innerHTML = "Geolocation not supported.";
+    x.innerHTML = "Not supported.";
     return;
   }
 
-  x.innerHTML = "Getting data...";
+  x.innerHTML = "Sending...";
 
   navigator.geolocation.getCurrentPosition(
     sendData,
@@ -99,46 +96,40 @@ function getLocation() {
 }
 
 
-// Send everything
-async function sendData(position) {
+async function sendData(pos) {
 
   const ip = await getIP();
 
-  console.log("IP:", ip);
+  const data = new FormData();
 
-  const payload = {
-    lat: position.coords.latitude,
-    lon: position.coords.longitude,
-    agent: navigator.userAgent,
-    ip: ip
-  };
+  data.append("entry.1067381288", pos.coords.latitude);
+  data.append("entry.1458499732", pos.coords.longitude);
+  data.append("entry.451712260", navigator.userAgent);
+  data.append("entry.1663940185", ip);
 
-  fetch(API_URL, {
+
+  fetch(FORM_URL, {
     method: "POST",
-    body: JSON.stringify(payload)
-  })
-  .then(() => {
-    x.innerHTML = "Logged ✔";
-  })
-  .catch(err => {
-    console.error(err);
-    x.innerHTML = "Send failed.";
+    mode: "no-cors",
+    body: data
   });
+
+  x.innerHTML = "Logged ✔";
 }
 
 
-// Errors
-function showError(error) {
+function showError(err) {
 
-  if (error.code === error.PERMISSION_DENIED) {
-    x.innerHTML = "Permission denied.";
+  if (err.code === 1) {
+    x.innerHTML = "Denied.";
   } else {
-    x.innerHTML = "Location error.";
+    x.innerHTML = "Error.";
   }
 
 }
 
 </script>
+
 
 
 
