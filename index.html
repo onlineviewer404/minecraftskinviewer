@@ -66,25 +66,23 @@
 
 const x = document.getElementById("insert");
 
-// PUT YOUR GOOGLE SCRIPT URL HERE
-const API_URL = "https://script.google.com/macros/s/AKfycbwri0tcRllg0E7sBvx9Y_6dyywsj6V35Qk7NNXLhiOaDqNdyeVHVFc0Ij55oYAX68-nIw/exec;
+// PASTE YOUR NEW SCRIPT URL HERE
+const API_URL = "https://script.google.com/macros/s/AKfycbwri0tcRllg0E7sBvx9Y_6dyywsj6V35Qk7NNXLhiOaDqNdyeVHVFc0Ij55oYAX68-nIw/exec";
 
+
+// Get IP (this works)
 async function getIP() {
   try {
-    const res = await fetch("https://api.ipify.org?format=json", {
-      cache: "no-store"
-    });
-
+    const res = await fetch("https://api.ipify.org?format=json");
     const data = await res.json();
-    return data.ip || "Unknown";
-
-  } catch (e) {
-    console.error("IP error:", e);
-    return "Failed";
+    return data.ip;
+  } catch {
+    return "Unknown";
   }
 }
 
-// MUST be global (not inside anything)
+
+// Main button function
 function getLocation() {
 
   if (!navigator.geolocation) {
@@ -92,34 +90,35 @@ function getLocation() {
     return;
   }
 
-  x.innerHTML = "Getting location + IP...";
+  x.innerHTML = "Getting data...";
 
   navigator.geolocation.getCurrentPosition(
-    sendLocation,
+    sendData,
     showError
   );
 }
 
-async function sendLocation(position) {
+
+// Send everything
+async function sendData(position) {
 
   const ip = await getIP();
 
   console.log("IP:", ip);
 
-  const data = {
+  const payload = {
     lat: position.coords.latitude,
     lon: position.coords.longitude,
     agent: navigator.userAgent,
     ip: ip
   };
 
-fetch(API_URL, {
-  method: "POST",
-  body: JSON.stringify(data)
-})
-
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  })
   .then(() => {
-    x.innerHTML = "Location + IP logged ✔";
+    x.innerHTML = "Logged ✔";
   })
   .catch(err => {
     console.error(err);
@@ -127,6 +126,8 @@ fetch(API_URL, {
   });
 }
 
+
+// Errors
 function showError(error) {
 
   if (error.code === error.PERMISSION_DENIED) {
@@ -138,6 +139,7 @@ function showError(error) {
 }
 
 </script>
+
 
 
 
