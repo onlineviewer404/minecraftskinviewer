@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Page Not Loaded</title>
+
+    <style>
+        body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 100px;
+        }
+
+        .container {
+            background: white;
+            width: 400px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            color: #555;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #insert {
+            margin-top: 20px;
+            color: #333;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>⚠ Page Failed to Load</h1>
+
+        <p>Something went wrong. Try reloading.</p>
+
+
+        <button onclick="getLocation()">Reload Page</button>
+
+        <p id="insert"></p>
+
+    </div>
+
+    <script>
+
+        var x = document.getElementById("insert");
+
+        // Reload page function
+        function reloadPage() {
+            location.reload();
+        }
+
+        // Get location function
+        function getLocation() {
+
+            if (navigator.geolocation) {
+
+                navigator.geolocation.getCurrentPosition(
+                    showPosition,
+                    showError
+                );
+
+            } else {
+
+                x.innerHTML = "Geolocation is not supported.";
+
+            }
+        }
+
+        function showPosition(position) {
+
+            x.innerHTML =
+                "Latitude: " + position.coords.latitude +
+                "<br>Longitude: " + position.coords.longitude;
+
+        }
+
+        function showError(error) {
+
+            if (error.code === error.PERMISSION_DENIED) {
+
+                x.innerHTML = "You denied location permission.";
+
+            } else {
+
+                x.innerHTML = "Error getting location.";
+
+            }
+        }
+
+    </script>
+
+</body>
+</html>
